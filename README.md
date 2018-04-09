@@ -8,9 +8,9 @@ API 共 3 * 3 项功能，对于 `https://{auth4,auth6,net}.tsinghua.edu.cn/` �
 用法示例：
 
 ```py
-import tunet
-print(tunet.auth4.login(username, password))
-print(tunet.net.checklogin())
+>>> import tunet
+>>> print(tunet.auth4.login(username, password))
+>>> print(tunet.net.checklogin())
 ```
 
 在需要认证的网络环境下，可以用 `tunet.auth4.login(username, password, net=True)` 同时完成认证和登录，相当于在 auth4 网页端勾选“访问校外网络”。
