@@ -10,6 +10,8 @@ import getpass
 import sys
 import tunet
 
+from six.moves import urllib
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -46,17 +48,17 @@ if __name__ == '__main__':
                 res = action(args.user, password)
             else:
                 res = action(args.user, password, bool(args.net))
-        except:
-            error('connection error: unreachable or timeout')
+        except urllib.error.URLError as e:
+            error('URLError: {:s}'.format(e))
     else:
         try:
             res = action()
-        except Exception as e:
+        except (tunet.NotLoginError, urllib.error.URLError) as e:
             if isinstance(e, tunet.NotLoginError):
                 print('not log in')
                 exit(0)
             else:
-                error('connection error: unreachable or timeout')
+                error('URLError: {:s}'.format(e))
 
     if args.target == 'net':
         if args.action == 'checklogin':
