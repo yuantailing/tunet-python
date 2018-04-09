@@ -41,7 +41,7 @@ API 总是提供原生的结果，如果不希望异常退出，或需要更友�
 
 ```sh
 $ python cli.py auth4 checklogin
-$ cat password.txt | python cli.py auth4 login username
+$ cat password.txt | python cli.py auth4 login -u username
 $ python cli.py net checklogin
 ```
 
