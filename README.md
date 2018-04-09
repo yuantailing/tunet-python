@@ -26,7 +26,7 @@ print(tunet.net.checklogin())
 | auth6.logout     | 即时异常退出 | 即时异常退出     | 即时返回 |
 | auth6.checklogin | 即时返回     | 即时返回         | 即时返回 |
 | net.login        | 即时返回     | 超时异常退出     | 即时返回 |
-| net.logout       | 即时异常退出 | 超时异常退出     | 即时返回 |
+| net.logout       | 即时返回     | 超时异常退出     | 即时返回 |
 | net.checklogin   | 即时返回     | 超时异常退出     | 即时返回 |
 
 特殊地，
