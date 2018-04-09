@@ -38,10 +38,10 @@ def xEncode(str, key):
                 return None
             c = m
         for i in range(d):
-            a[i] = chr(a[i] & 0xff) \
-                    + chr(rshift(a[i], 8) & 0xff) \
-                    + chr(rshift(a[i], 16) & 0xff) \
-                    + chr(rshift(a[i], 24) & 0xff)
+            a[i] = six.int2byte(a[i] & 0xff) \
+                    + six.int2byte(rshift(a[i], 8) & 0xff) \
+                    + six.int2byte(rshift(a[i], 16) & 0xff) \
+                    + six.int2byte(rshift(a[i], 24) & 0xff)
         if b:
             return b''.join(a)[:c]
         else:
@@ -92,7 +92,7 @@ def get(url, data, callback, dataType):
         req = request.Request(url + '?' + _data if _data else url)
         res = request.urlopen(req, timeout=5)  # TODO: hardcode
         assert 200 == res.getcode()
-        page = res.read()
+        page = res.read().decode('utf-8')
         assert page.startswith(data['callback'] + '({') and page.endswith('})')
         page = page[len(data['callback']) + 1:-1]
         page = json.loads(page)
@@ -105,7 +105,7 @@ def get(url, data, callback, dataType):
         req = request.Request(url + '?' + data if data else url)
         res = request.urlopen(req, timeout=5)
         assert 200 == res.getcode()
-        page = res.read()
+        page = res.read().decode('utf-8')
         if callback:
             page = callback(page)
         return page
@@ -115,13 +115,15 @@ def get(url, data, callback, dataType):
 
 
 def base64_encode(s):
-    a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-    b = 'LVoJPiCN2R8G90yg+hmFHuacZ1OWMnrsSTXkYpUq/3dlbfKwv6xztjI7DeBE45QA'
+    a = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    b = b'LVoJPiCN2R8G90yg+hmFHuacZ1OWMnrsSTXkYpUq/3dlbfKwv6xztjI7DeBE45QA'
     s = base64.b64encode(s)
-    t = ''
-    for c in s:
-        if c != '=':
-            c = b[a.index(c)]
+    t = b''
+    for i, _ in enumerate(s):
+        c = s[i:i + 1]
+        if c != b'=':
+            pos = a.index(c)
+            c = b[pos:pos + 1]
         t += c
     return t
 
@@ -142,11 +144,11 @@ def getJSON(url, data, callback):
                     'ip': _data.get('ip'),
                     'acid': _data.get('ac_id'),
                     'enc_ver': enc,
-                }), token))
-                hmd5 = hashlib.md5(data.get('password',
-                                            'undefined')).hexdigest()
+                }), token)).decode()
+                hmd5 = hashlib.md5(data.get('password', 'undefined')
+                                       .encode('latin1')).hexdigest()
                 _data['password'] = '{MD5}' + hmd5
-                _data['chksum'] = hashlib.sha1(
+                _data['chksum'] = hashlib.sha1((
                         token + _data.get('username') +
                         token + hmd5 +
                         token + '{}'.format(_data.get('ac_id')) +
@@ -154,7 +156,7 @@ def getJSON(url, data, callback):
                         token + '{}'.format(n) +
                         token + '{}'.format(type) +
                         token + _data.get('info')
-                ).hexdigest()
+                ).encode('latin1')).hexdigest()
                 _data['n'] = n
                 _data['type'] = type
                 return get(url, _data, callback, 'jsonp')
@@ -176,15 +178,15 @@ def getJSON(url, data, callback):
                     'ip': _data.get('ip'),
                     'acid': _data.get('ac_id'),
                     'enc_ver': enc,
-                }), token))
-                _data['chksum'] = hashlib.sha1(
+                }), token)).decode()
+                _data['chksum'] = hashlib.sha1((
                         token + _data.get('username') +
                         token + '{}'.format(_data.get('ac_id')) +
                         token + _data.get('ip') +
                         token + '{}'.format(n) +
                         token + '{}'.format(type) +
                         token + _data.get('info')
-                ).hexdigest()
+                ).encode('latin1')).hexdigest()
                 _data['n'] = n
                 _data['type'] = type
                 return get(url, _data, callback, 'jsonp')

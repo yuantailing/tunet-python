@@ -19,10 +19,11 @@ def subdomain_info(subdomain):
     def info():
         line = lib.get('https://{:s}.tsinghua.edu.cn/rad_user_info.php'
                        .format(subdomain), {}, None, 'raw')
-        words = [s.strip() for s in line.split(',')]
-        if not words:
+        line = line.strip()
+        if not line:
             return {}
         else:
+            words = [s.strip() for s in line.split(',')]
             return {
                 'username': words[0],
                 'time_login': int(words[1]),
@@ -102,7 +103,8 @@ def net_login(username, password):
             {
                 'action': 'login',
                 'username': username,
-                'password': '{MD5_HEX}' + hashlib.md5(password).hexdigest(),
+                'password': '{MD5_HEX}' + hashlib.md5(
+                            password.encode('latin1')).hexdigest(),
                 'ac_id': '1',
             },
             None,
