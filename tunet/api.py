@@ -11,6 +11,10 @@ from . import lib
 from six.moves.urllib import parse, request
 
 
+class NotLoginError(Exception):
+    pass
+
+
 def subdomain_info(subdomain):
     def info():
         line = lib.get('https://{:s}.tsinghua.edu.cn/rad_user_info.php'
@@ -57,7 +61,7 @@ def auth_logout(ipv):
     def logout():
         username = auth_checklogin(ipv)().get('username')
         if not username:
-            raise ValueError('username not found')
+            raise NotLoginError('username not found')
         res = lib.getJSON(
             'https://auth{:d}.tsinghua.edu.cn/cgi-bin/srun_portal'.format(ipv),
             {
