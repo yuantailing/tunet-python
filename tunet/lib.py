@@ -92,7 +92,7 @@ def get(url, data, callback, dataType):
         req = request.Request(url + '?' + _data if _data else url)
         res = request.urlopen(req, timeout=5)  # TODO: hardcode
         assert 200 == res.getcode()
-        page = res.read().decode('utf-8')
+        page = res.read().decode('utf-8').strip()
         assert page.startswith(data['callback'] + '({') and page.endswith('})')
         page = page[len(data['callback']) + 1:-1]
         page = json.loads(page)
