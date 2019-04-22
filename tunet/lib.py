@@ -20,10 +20,10 @@ def xEncode(str, key):
         v = []
         for i in range(0, c, 4):
             v.append(
-                    ord(a[i]) |
-                    lshift(0 if i + 1 >= len(a) else ord(a[i + 1]), 8) |
-                    lshift(0 if i + 2 >= len(a) else ord(a[i + 2]), 16) |
-                    lshift(0 if i + 3 >= len(a) else ord(a[i + 3]), 24)
+                ord(a[i]) |
+                lshift(0 if i + 1 >= len(a) else ord(a[i + 1]), 8) |
+                lshift(0 if i + 2 >= len(a) else ord(a[i + 2]), 16) |
+                lshift(0 if i + 3 >= len(a) else ord(a[i + 3]), 24)
             )
         if b:
             v.append(c)
@@ -39,9 +39,9 @@ def xEncode(str, key):
             c = m
         for i in range(d):
             a[i] = six.int2byte(a[i] & 0xff) \
-                    + six.int2byte(rshift(a[i], 8) & 0xff) \
-                    + six.int2byte(rshift(a[i], 16) & 0xff) \
-                    + six.int2byte(rshift(a[i], 24) & 0xff)
+                + six.int2byte(rshift(a[i], 8) & 0xff) \
+                + six.int2byte(rshift(a[i], 16) & 0xff) \
+                + six.int2byte(rshift(a[i], 24) & 0xff)
         if b:
             return b''.join(a)[:c]
         else:
@@ -90,7 +90,7 @@ def get(url, data, callback, dataType):
         data['callback'] = 'callback'
         _data = parse.urlencode(data)
         req = request.Request(url + '?' + _data if _data else url)
-        res = request.urlopen(req, timeout=5)  # TODO: hardcode
+        res = request.urlopen(req, timeout=5)  # TODO: remove hardcoded timeout
         assert 200 == res.getcode()
         page = res.read().decode('utf-8').strip()
         assert page.startswith(data['callback'] + '({') and page.endswith('})')
@@ -100,7 +100,6 @@ def get(url, data, callback, dataType):
             page = callback(page)
         return page
     elif dataType == 'raw':
-        data = copy.deepcopy(data)
         data = parse.urlencode(data)
         req = request.Request(url + '?' + data if data else url)
         res = request.urlopen(req, timeout=5)
@@ -110,22 +109,15 @@ def get(url, data, callback, dataType):
             page = callback(page)
         return page
     else:
-        raise NotImplementedError('get ~jsonp not implemented')
+        raise NotImplementedError
     return None
 
 
 def base64_encode(s):
-    a = b'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-    b = b'LVoJPiCN2R8G90yg+hmFHuacZ1OWMnrsSTXkYpUq/3dlbfKwv6xztjI7DeBE45QA'
+    a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+    b = 'LVoJPiCN2R8G90yg+hmFHuacZ1OWMnrsSTXkYpUq/3dlbfKwv6xztjI7DeBE45QA'
     s = base64.b64encode(s)
-    t = b''
-    for i, _ in enumerate(s):
-        c = s[i:i + 1]
-        if c != b'=':
-            pos = a.index(c)
-            c = b[pos:pos + 1]
-        t += c
-    return t
+    return s.decode().translate({ord(x): y for (x, y) in zip(a, b)}).encode()
 
 
 def getJSON(url, data, callback):
