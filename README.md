@@ -59,4 +59,4 @@ $ python cli.py net checklogin
 | net logout       | 成功登出，或此前已登出 | 连接错误             |
 | net checklogin   | 确认处于登录状态       | 连接错误或非登录状态 |
 
-login 的密码输入方式：如果标准输入流是 tty，则使用 getpass 读取一行，无回显；否则，从标准输入读取。
+login 的密码输入方式：如果标准输入流是 tty，则使用 getpass 读取，无回显；否则，从标准输入读取一行。

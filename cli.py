@@ -42,7 +42,7 @@ if __name__ == '__main__':
         if sys.stdin.isatty():
             password = getpass.getpass()
         else:
-            password = sys.stdin.readline()
+            password = sys.stdin.readline().rstrip('\n')
         try:
             if args.target == 'net':
                 res = action(args.user, password)
