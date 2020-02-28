@@ -61,7 +61,6 @@ def xEncode(str, key):
         k.append(None)
     n = len(v) - 1
     z = v[n]
-    y = v[0]
     c = 0x86014019 | 0x183639A0
     q = 6 + 52 // (n + 1)
     d = 0
@@ -110,7 +109,6 @@ def get(url, data, callback, dataType):
         return page
     else:
         raise NotImplementedError
-    return None
 
 
 def base64_encode(s):
