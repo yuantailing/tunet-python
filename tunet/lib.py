@@ -118,6 +118,17 @@ def base64_encode(s):
     return s.decode().translate({ord(x): y for (x, y) in zip(a, b)}).encode()
 
 
+def get_ac_id(ip):
+    url = 'http://usereg.tsinghua.edu.cn/ip_login_import.php'
+    data = {'actionType': 'searchNasId', 'ip': ip}
+    response = request.urlopen(url, parse.urlencode(data).encode())
+    text = response.read().decode('utf-8').strip()
+    if text == 'fail':
+        return 1
+    else:
+        return int(text)
+
+
 def getJSON(url, data, callback):
     if 'srun_portal' in url or 'get_challenge' in url:
         enc = 'srun_bx1'
@@ -127,6 +138,11 @@ def getJSON(url, data, callback):
         if data.get('action') == 'login':
             def foo(data):
                 assert data.get('res') == 'ok', data.get('error')
+
+                ip = data.get('online_ip')
+                _data['ac_id'] = get_ac_id(ip)
+                _data['ip'] = ip
+
                 token = data.get('challenge')
                 _data['info'] = '{SRBX1}' + base64_encode(xEncode(json.dumps({
                     'username': _data.get('username'),
