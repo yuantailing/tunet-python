@@ -9,11 +9,12 @@ API 共 3 * 3 项功能，对于 `https://{auth4,auth6,net}.tsinghua.edu.cn/` �
 
 ```py
 >>> import tunet
->>> print(tunet.auth4.login(username, password))
+>>> print(tunet.auth4.login(username, password, net=True))
 >>> print(tunet.net.checklogin())
 ```
 
-在需要认证的网络环境下，可以用 `tunet.auth4.login(username, password, net=True)` 同时完成认证和登录，相当于在 auth4 网页端勾选“访问校外网络”。
+在需要认证的网络环境下，`tunet.auth4.login` 的参数 `net=True` 用于同时完成准入认证和连接外网，相当于在 auth4 网页端勾选“访问校外网络”。
+若无 `net=True`，则只登录校内准入认证，无法访问校外网络。
 
 行为定义：
 
@@ -41,7 +42,7 @@ API 总是提供原生的结果，如果不希望异常退出，或需要更友�
 
 ```sh
 $ python cli.py auth4 checklogin
-$ cat password.txt | python cli.py auth4 login -n -u username
+$ cat password.txt | python cli.py auth4 login --net -u username
 $ python cli.py net checklogin
 ```
 
@@ -49,13 +50,13 @@ $ python cli.py net checklogin
 
 |                  | 进程返回 0 的情况      | 进程返回非 0 的情况  |
 | :--------------- | :--------------------- | :------------------- |
-| auth4 login      | 成功登陆，或此前已登录 | 连接错误或帐号错误   |
+| auth4 login      | 成功登录，或此前已登录 | 连接错误或帐号错误   |
 | auth4 logout     | 成功登出，或此前已登出 | 连接错误             |
 | auth4 checklogin | 确认处于登录状态       | 连接错误或非登录状态 |
-| auth6 login      | 成功登陆，或此前已登录 | 连接错误或帐号错误   |
+| auth6 login      | 成功登录，或此前已登录 | 连接错误或帐号错误   |
 | auth6 logout     | 成功登出，或此前已登出 | 连接错误             |
 | auth6 checklogin | 确认处于登录状态       | 连接错误或非登录状态 |
-| net login        | 成功登陆，或此前已登录 | 连接错误或帐号错误   |
+| net login        | 成功登录，或此前已登录 | 连接错误或帐号错误   |
 | net logout       | 成功登出，或此前已登出 | 连接错误             |
 | net checklogin   | 确认处于登录状态       | 连接错误或非登录状态 |
 

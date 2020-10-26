@@ -17,13 +17,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
                         description='TUNet Command-Line Interface')
     parser.add_argument('target',
-                        help='Select target: auth4 / auth6 / net')
+                        help='Select a target: auth4 / auth6 / net')
     parser.add_argument('action',
-                        help='Select action: login / logout / checklogin')
+                        help='Select an action: login / logout / checklogin')
     parser.add_argument('-u', '--user', '--username',
-                        help='Login username', required=False)
+                        help='username to login', required=False)
     parser.add_argument('-n', '--net', action='store_true',
-                        help='Also login net.tsinghua.edu.cn', required=False)
+                        help='access to the Internet', required=False)
     args = parser.parse_args()
 
     def error(s):
