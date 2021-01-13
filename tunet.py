@@ -1,13 +1,40 @@
+# -*- coding: UTF-8 -*-
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
+
 def closure():
     import base64
     import functools
     import hashlib
     import hmac
     import json
-    import six
+    import sys
     import time
 
-    from six.moves.urllib import parse, request
+    if sys.version_info[0] == 2:
+        import urllib
+        import urllib2
+        import urlparse
+        int2byte = chr
+        urlencode = urllib.urlencode
+        parse_qs = urlparse.parse_qs
+        urlparse = urlparse.urlparse
+        Request = urllib2.Request
+        urlopen = urllib2.urlopen
+    else:
+        import struct
+        import urllib.parse
+        import urllib.request
+        int2byte = struct.Struct(">B").pack
+        urlencode = urllib.parse.urlencode
+        parse_qs = urllib.parse.parse_qs
+        urlparse = urllib.parse.urlparse
+        Request = urllib.request.Request
+        urlopen = urllib.request.urlopen
 
     _URL_SRUN_PORTAL = 'https://auth{:d}.tsinghua.edu.cn/cgi-bin/srun_portal'
     _URL_GET_CHALLENGE = _URL_SRUN_PORTAL.replace(
@@ -47,10 +74,10 @@ def closure():
                     return None
                 c = m
             for i in range(d):
-                a[i] = six.int2byte(a[i] & 0xff) \
-                    + six.int2byte(rshift(a[i], 8) & 0xff) \
-                    + six.int2byte(rshift(a[i], 16) & 0xff) \
-                    + six.int2byte(rshift(a[i], 24) & 0xff)
+                a[i] = int2byte(a[i] & 0xff) \
+                    + int2byte(rshift(a[i], 8) & 0xff) \
+                    + int2byte(rshift(a[i], 16) & 0xff) \
+                    + int2byte(rshift(a[i], 24) & 0xff)
             if b:
                 return b''.join(a)[:c]
             else:
@@ -101,8 +128,8 @@ def closure():
     def get_ac_id(ip):
         url = _URL_QUERY_AC_ID
         data = {'actionType': 'searchNasId', 'ip': ip}
-        req = request.Request(url, data=parse.urlencode(data).encode())
-        res = request.urlopen(req, timeout=_SHORT_TIMEOUT)
+        req = Request(url, data=urlencode(data).encode())
+        res = urlopen(req, timeout=_SHORT_TIMEOUT)
         assert 200 == res.getcode()
         text = res.read().decode('utf-8').strip()
         if text == 'fail':
@@ -127,8 +154,8 @@ def closure():
             'double_stack': '1',
             '_': current_timestamp(),
         }
-        req = request.Request(url + '?' + parse.urlencode(data))
-        res = request.urlopen(req, timeout=_SHORT_TIMEOUT)
+        req = Request(url + '?' + urlencode(data))
+        res = urlopen(req, timeout=_SHORT_TIMEOUT)
         challenge = read_callback(res)
         assert challenge.get('res') == 'ok', challenge.get('error')
         return challenge
@@ -176,17 +203,17 @@ def closure():
             'type': type,
             '_': current_timestamp(),
         }
-        req = request.Request(url + '?' + parse.urlencode(data))
-        res = request.urlopen(req, timeout=_SHORT_TIMEOUT)
+        req = Request(url + '?' + urlencode(data))
+        res = urlopen(req, timeout=_SHORT_TIMEOUT)
         return read_callback(res)
 
     def _auth_checklogin(ipv):
         url = _URL_AC_DETECT.format(ipv)
-        req = request.Request(url)
-        res = request.urlopen(req, timeout=_SHORT_TIMEOUT)
+        req = Request(url)
+        res = urlopen(req)
         assert 200 == res.getcode()
         url = res.geturl()
-        username = parse.parse_qs(parse.urlparse(url).query).get('username')
+        username = parse_qs(urlparse(url).query).get('username')
         if not username:
             return {}
         else:
@@ -230,14 +257,14 @@ def closure():
             'type': type,
             '_': current_timestamp(),
         }
-        req = request.Request(url + '?' + parse.urlencode(data))
-        res = request.urlopen(req, timeout=_SHORT_TIMEOUT)
+        req = Request(url + '?' + urlencode(data))
+        res = urlopen(req, timeout=_SHORT_TIMEOUT)
         return read_callback(res)
 
     def _subdomain_info(subdomain):
         url = _URL_USER_INFO.format(subdomain)
-        req = request.Request(url)
-        res = request.urlopen(req)
+        req = Request(url)
+        res = urlopen(req)
         assert 200 == res.getcode()
         line = res.read().decode('utf-8').strip()
         if not line:
@@ -265,16 +292,16 @@ def closure():
                         password.encode('latin1')).hexdigest(),
             'ac_id': '1',
         }
-        req = request.Request(url, data=parse.urlencode(data).encode())
-        res = request.urlopen(req)
+        req = Request(url, data=urlencode(data).encode())
+        res = urlopen(req)
         assert 200 == res.getcode()
         return {'msg': res.read().decode('utf-8')}
 
     def _net_logout():
         url = _URL_NET_LOGIN
         data = {'action': 'logout'}
-        req = request.Request(url, data=parse.urlencode(data).encode())
-        res = request.urlopen(req)
+        req = Request(url, data=urlencode(data).encode())
+        res = urlopen(req)
         assert 200 == res.getcode()
         return {'msg': res.read().decode('utf-8')}
 
