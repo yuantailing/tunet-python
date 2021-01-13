@@ -16,25 +16,15 @@ def closure():
     import time
 
     if sys.version_info[0] == 2:
-        import urllib
-        import urllib2
-        import urlparse
+        from urllib import urlencode
+        from urllib2 import Request, urlopen
+        from urlparse import parse_qs, urlparse
         int2byte = chr
-        urlencode = urllib.urlencode
-        parse_qs = urlparse.parse_qs
-        urlparse = urlparse.urlparse
-        Request = urllib2.Request
-        urlopen = urllib2.urlopen
     else:
         import struct
-        import urllib.parse
-        import urllib.request
+        from urllib.parse import parse_qs, urlencode, urlparse
+        from urllib.request import Request, urlopen
         int2byte = struct.Struct(">B").pack
-        urlencode = urllib.parse.urlencode
-        parse_qs = urllib.parse.parse_qs
-        urlparse = urllib.parse.urlparse
-        Request = urllib.request.Request
-        urlopen = urllib.request.urlopen
 
     _URL_SRUN_PORTAL = 'https://auth{:d}.tsinghua.edu.cn/cgi-bin/srun_portal'
     _URL_GET_CHALLENGE = _URL_SRUN_PORTAL.replace(
