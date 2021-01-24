@@ -10,7 +10,12 @@ import getpass
 import sys
 import tunet
 
-from six.moves import urllib
+if sys.version_info[0] == 2:
+    import urllib2
+    URLError = urllib2.URLError
+else:
+    import urllib.error
+    URLError = urllib.error.URLError
 
 
 if __name__ == '__main__':
@@ -48,17 +53,13 @@ if __name__ == '__main__':
                 res = action(args.user, password)
             else:
                 res = action(args.user, password, bool(args.net))
-        except urllib.error.URLError as e:
+        except URLError as e:
             error('URLError: {:s}'.format(e))
     else:
         try:
             res = action()
-        except (tunet.NotLoginError, urllib.error.URLError) as e:
-            if isinstance(e, tunet.NotLoginError):
-                print('not log in')
-                exit(0)
-            else:
-                error('URLError: {:s}'.format(e))
+        except URLError as e:
+            error('URLError: {:s}'.format(e))
 
     if args.target == 'net':
         if args.action == 'checklogin':
@@ -96,7 +97,9 @@ if __name__ == '__main__':
             print('result:', res.get('res'))
             print('message:', res.get('error_msg'))
             if res.get('error') == 'ok' or \
-                    res.get('error') == 'ip_already_online_error':
+                    res.get('error') == 'ip_already_online_error' or \
+                    (args.action == 'logout' and
+                        res.get('error') == 'login_error'):
                 exit(0)
             else:
                 exit(1)
