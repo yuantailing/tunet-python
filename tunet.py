@@ -135,7 +135,7 @@ def closure():
         args = json.loads(page)
         return args
 
-    def _get_challenge(ipv, username, ip):
+    def get_challenge(ipv, username, ip):
         url = _URL_GET_CHALLENGE.format(ipv)
         data = {
             'callback': _JSONP_FUNCNAME,
@@ -155,7 +155,7 @@ def closure():
             username = '{:s}@tsinghua'.format(username)\
 
         url = _URL_SRUN_PORTAL.format(ipv)
-        challenge = _get_challenge(ipv, username, ip)
+        challenge = get_challenge(ipv, username, ip)
         ip = ip or challenge['online_ip']
         ac_id = get_ac_id(ip)
         n = 200
@@ -214,7 +214,7 @@ def closure():
     def _auth_logout(ipv, ip=''):
         url = _URL_SRUN_PORTAL.format(ipv)
         username = 'placeholder'
-        challenge = _get_challenge(ipv, username, ip)
+        challenge = get_challenge(ipv, username, ip)
 
         ac_id = 1
         n = 200

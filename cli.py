@@ -11,11 +11,9 @@ import sys
 import tunet
 
 if sys.version_info[0] == 2:
-    import urllib2
-    URLError = urllib2.URLError
+    from urllib2 import URLError
 else:
-    import urllib.error
-    URLError = urllib.error.URLError
+    from urllib.error import URLError
 
 
 if __name__ == '__main__':
