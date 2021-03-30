@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+urlopen = None
 
 def closure():
     import base64
@@ -17,14 +18,18 @@ def closure():
 
     if sys.version_info[0] == 2:
         from urllib import urlencode
-        from urllib2 import Request, urlopen
+        from urllib2 import Request, ProxyHandler, build_opener
         from urlparse import parse_qs, urlparse
         int2byte = chr
     else:
         import struct
         from urllib.parse import parse_qs, urlencode, urlparse
-        from urllib.request import Request, urlopen
+        from urllib.request import Request, ProxyHandler, build_opener
         int2byte = struct.Struct(">B").pack
+
+    global urlopen
+    urlopen = build_opener(ProxyHandler({})).open
+
 
     _URL_SRUN_PORTAL = 'https://auth{:d}.tsinghua.edu.cn/cgi-bin/srun_portal'
     _URL_GET_CHALLENGE = _URL_SRUN_PORTAL.replace(
