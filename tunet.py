@@ -31,7 +31,7 @@ def closure():
     _URL_SRUN_PORTAL = 'https://auth{:d}.tsinghua.edu.cn/cgi-bin/srun_portal'
     _URL_GET_CHALLENGE = _URL_SRUN_PORTAL.replace(
             'srun_portal', 'get_challenge')
-    _URL_QUERY_AC_ID = 'http://usereg.tsinghua.edu.cn/ip_login_import.php'
+    _URL_QUERY_AC_ID = 'https://usereg.tsinghua.edu.cn/ip_login_import.php'
     _URL_AC_DETECT = 'https://auth{:d}.tsinghua.edu.cn/ac_detect.php?ac_id=1'
     _URL_NET_LOGIN = 'https://net.tsinghua.edu.cn/do_login.php'
     _URL_USER_INFO = 'https://{:s}.tsinghua.edu.cn/rad_user_info.php'
